@@ -269,6 +269,18 @@ namespace detail {
 #endif
     }
 
+#if defined(AMREX_USE_HIP)
+    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE
+    void AddNoRet (double* const sum, double const value) noexcept
+    {
+#if AMREX_DEVICE_COMPILE
+        unsafeAtomicAdd(sum, value);
+#else
+        *sum += value;
+#endif
+    }
+#endif
+
 #if defined(AMREX_USE_HIP) && defined(HIP_VERSION_MAJOR) && (HIP_VERSION_MAJOR < 5)
     AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE
     void AddNoRet (float* const sum, float const value) noexcept
